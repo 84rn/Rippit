@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.panel1 = new System.Windows.Forms.Panel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btStop = new System.Windows.Forms.Button();
@@ -36,8 +37,6 @@
             this.tToPage = new System.Windows.Forms.TextBox();
             this.cbSort = new System.Windows.Forms.ComboBox();
             this.cbCategory = new System.Windows.Forms.ComboBox();
-            this.lImgCounter = new System.Windows.Forms.Label();
-            this.lCurrentUrl = new System.Windows.Forms.Label();
             this.pbImages = new System.Windows.Forms.ProgressBar();
             this.lPath = new System.Windows.Forms.Label();
             this.tPath = new System.Windows.Forms.TextBox();
@@ -60,6 +59,10 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.StatusStrip = new System.Windows.Forms.StatusStrip();
+            this.lStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.lStatus2 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.panel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -69,6 +72,8 @@
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            this.StatusStrip.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
@@ -86,8 +91,6 @@
             this.groupBox1.Controls.Add(this.tToPage);
             this.groupBox1.Controls.Add(this.cbSort);
             this.groupBox1.Controls.Add(this.cbCategory);
-            this.groupBox1.Controls.Add(this.lImgCounter);
-            this.groupBox1.Controls.Add(this.lCurrentUrl);
             this.groupBox1.Controls.Add(this.pbImages);
             this.groupBox1.Controls.Add(this.lPath);
             this.groupBox1.Controls.Add(this.tPath);
@@ -132,7 +135,7 @@
             this.tToPage.Name = "tToPage";
             this.tToPage.Size = new System.Drawing.Size(45, 20);
             this.tToPage.TabIndex = 2;
-            this.tToPage.Text = "2";
+            this.tToPage.Text = "200";
             // 
             // cbSort
             // 
@@ -166,26 +169,6 @@
             this.cbCategory.ValueMember = "New";
             this.cbCategory.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
-            // lImgCounter
-            // 
-            this.lImgCounter.AutoSize = true;
-            this.lImgCounter.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.lImgCounter.Location = new System.Drawing.Point(60, 87);
-            this.lImgCounter.Name = "lImgCounter";
-            this.lImgCounter.Size = new System.Drawing.Size(0, 9);
-            this.lImgCounter.TabIndex = 10;
-            this.lImgCounter.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // lCurrentUrl
-            // 
-            this.lCurrentUrl.AutoSize = true;
-            this.lCurrentUrl.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.lCurrentUrl.Location = new System.Drawing.Point(287, 87);
-            this.lCurrentUrl.Name = "lCurrentUrl";
-            this.lCurrentUrl.Size = new System.Drawing.Size(0, 9);
-            this.lCurrentUrl.TabIndex = 9;
-            this.lCurrentUrl.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
             // pbImages
             // 
             this.pbImages.Location = new System.Drawing.Point(87, 86);
@@ -209,7 +192,7 @@
             this.tPath.Name = "tPath";
             this.tPath.Size = new System.Drawing.Size(262, 20);
             this.tPath.TabIndex = 3;
-            this.tPath.Text = "D:\\Projekty\\test2\\";
+            this.tPath.Text = "D:\\s";
             // 
             // chbDownload
             // 
@@ -241,7 +224,7 @@
             this.tFromPage.Name = "tFromPage";
             this.tFromPage.Size = new System.Drawing.Size(45, 20);
             this.tFromPage.TabIndex = 1;
-            this.tFromPage.Text = "2";
+            this.tFromPage.Text = "1";
             // 
             // btStart
             // 
@@ -286,7 +269,7 @@
             this.groupBox2.Size = new System.Drawing.Size(809, 346);
             this.groupBox2.TabIndex = 0;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Preview";
+            this.groupBox2.Text = "Summary";
             // 
             // dgvSummary
             // 
@@ -351,9 +334,9 @@
             // pictureBox1
             // 
             this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox1.Location = new System.Drawing.Point(537, 3);
+            this.pictureBox1.Location = new System.Drawing.Point(535, 3);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(262, 210);
+            this.pictureBox1.Size = new System.Drawing.Size(262, 192);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 11;
             this.pictureBox1.TabStop = false;
@@ -375,11 +358,12 @@
             this.tableLayoutPanel1.Controls.Add(this.pictureBox3, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.pictureBox1, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.pictureBox2, 1, 0);
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(12, 505);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 16);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(802, 216);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(800, 198);
             this.tableLayoutPanel1.TabIndex = 12;
             // 
             // pictureBox3
@@ -387,7 +371,7 @@
             this.pictureBox3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.pictureBox3.Location = new System.Drawing.Point(3, 3);
             this.pictureBox3.Name = "pictureBox3";
-            this.pictureBox3.Size = new System.Drawing.Size(261, 210);
+            this.pictureBox3.Size = new System.Drawing.Size(260, 192);
             this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox3.TabIndex = 13;
             this.pictureBox3.TabStop = false;
@@ -395,23 +379,61 @@
             // pictureBox2
             // 
             this.pictureBox2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pictureBox2.Location = new System.Drawing.Point(270, 3);
+            this.pictureBox2.Location = new System.Drawing.Point(269, 3);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(261, 210);
+            this.pictureBox2.Size = new System.Drawing.Size(260, 192);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox2.TabIndex = 12;
             this.pictureBox2.TabStop = false;
+            // 
+            // StatusStrip
+            // 
+            this.StatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.lStatus,
+            this.lStatus2});
+            this.StatusStrip.Location = new System.Drawing.Point(0, 725);
+            this.StatusStrip.Name = "StatusStrip";
+            this.StatusStrip.Size = new System.Drawing.Size(826, 22);
+            this.StatusStrip.SizingGrip = false;
+            this.StatusStrip.TabIndex = 13;
+            this.StatusStrip.Text = "statusStrip1";
+            // 
+            // lStatus
+            // 
+            this.lStatus.Name = "lStatus";
+            this.lStatus.Size = new System.Drawing.Size(0, 17);
+            // 
+            // lStatus2
+            // 
+            this.lStatus2.Margin = new System.Windows.Forms.Padding(600, 3, 0, 2);
+            this.lStatus2.Name = "lStatus2";
+            this.lStatus2.Size = new System.Drawing.Size(0, 17);
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.tableLayoutPanel1);
+            this.groupBox3.Location = new System.Drawing.Point(9, 505);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(806, 217);
+            this.groupBox3.TabIndex = 14;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Preview";
             // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(826, 747);
-            this.Controls.Add(this.tableLayoutPanel1);
+            this.Controls.Add(this.groupBox3);
+            this.Controls.Add(this.StatusStrip);
             this.Controls.Add(this.pbPages);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
             this.Name = "MainWindow";
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "Rippit";
             this.panel1.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
@@ -423,7 +445,11 @@
             this.tableLayoutPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            this.StatusStrip.ResumeLayout(false);
+            this.StatusStrip.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -444,8 +470,6 @@
         private System.Windows.Forms.CheckBox chbDownload;
         private System.Windows.Forms.ProgressBar pbImages;
         private System.Windows.Forms.Timer tmrAfterSave;
-        private System.Windows.Forms.Label lCurrentUrl;
-        private System.Windows.Forms.Label lImgCounter;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.ComboBox cbSort;
         private System.Windows.Forms.ComboBox cbCategory;
@@ -460,6 +484,10 @@
         private System.Windows.Forms.DataGridViewLinkColumn URL;
         private System.Windows.Forms.DataGridViewTextBoxColumn Desc;
         private System.Windows.Forms.Button btStop;
+        private System.Windows.Forms.StatusStrip StatusStrip;
+        private System.Windows.Forms.ToolStripStatusLabel lStatus;
+        private System.Windows.Forms.ToolStripStatusLabel lStatus2;
+        private System.Windows.Forms.GroupBox groupBox3;
 
 
 

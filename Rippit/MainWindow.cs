@@ -68,9 +68,42 @@ namespace Rippit
             btStop.Enabled = !on;
             
         }
+
+        private int CheckPath()
+        {
+            Match match = Regex.Match(tPath.Text, @"^.:\\.*\\?$", RegexOptions.IgnoreCase);
+            if (match.Success)
+            {
+                match = Regex.Match(tPath.Text, @"^.:\\.*\\$", RegexOptions.IgnoreCase);
+                if(match.Success)
+                    return 2; // with /
+                else
+                    return 1; // without /     
+            }
+            else
+                return 0;
+        }
         
         private void InitSave()
         {
+            string tempPath = "";
+
+            switch(CheckPath())
+            {
+                case 1:
+                    tempPath = tPath.Text + "\\";
+                    break;
+                case 2:
+                    tempPath = tPath.Text;
+                    break;
+                case 0:
+                    MessageBox.Show("The entered path is wrong!","Wrong save path!", 
+                                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                    
+            }
+                     
+                    
             SettingsExchanger settings = new SettingsExchanger
             {
                 currentTitle = "",
@@ -83,7 +116,7 @@ namespace Rippit
                 progressData = 0,
                 progressPages = 0,
                 galPrefix = Prefix,
-                savePath = tPath.Text,
+                savePath = tempPath,
                 filename = ""
             };
 
@@ -95,6 +128,19 @@ namespace Rippit
             
             SaveThread.RunWorkerAsync(settings);
             ToggleInputs(false);
+        }
+
+        private void SetStatus(string s, int i)
+        {
+            switch(i)
+            {
+                case 1:
+                    lStatus.Text = s;
+                    break;
+                case 2:
+                    lStatus2.Text = s;
+                    break;
+            }
         }
    
         private void btStart_Click(object sender, EventArgs e)
@@ -136,113 +182,143 @@ namespace Rippit
             Stream objStream;
             StreamReader objReader;
             int Counter = 1;
+            int badCounter = 0;
+
+            int retry = 1;
 
             string firstPage = settings.startPage.ToString();
             string sURL = "http://imgur.com/" + settings.galPrefix + "/page/"+ firstPage + ".json";
             string sJSON = "";
-            
-           
-                /* For every page... */
-                for (int i = settings.startPage; i < settings.numPages + settings.startPage; i++)
+
+            SetStatus("Working...", 1);
+            /* For every page... */
+            for (int i = settings.startPage; i < settings.numPages + settings.startPage; i++)
+            {
+                /* Set the result */
+                e.Result = i+1;
+                /* Create a request */
+                wrURL = WebRequest.Create(sURL);
+                wrURL.Timeout = 4000;
+                try
                 {
-                    /* Create a request */
-                    wrURL = WebRequest.Create(sURL);
                     wrURL.GetResponse();
-                   
-
                     objStream = wrURL.GetResponse().GetResponseStream();
-                    objReader = new StreamReader(objStream);
-
-                    /* Read JSON */
-                    sJSON = objReader.ReadLine();
-
-                    /* Deserialize */
-                    rObj = fastJSON.JSON.Instance.ToObject<RootObject>(sJSON);
-
-                    /* For every picture on the list... */
-                    for (int j = 0; j < rObj.data.Count; j++, Counter++)
+                }
+                catch
+                {
+                    if (retry < 11)
                     {
-                        /* Save only .ext */
-                        if (rObj.data[j].ext != ".jpg" && 
-                            rObj.data[j].ext != ".jpeg" && 
-                            rObj.data[j].ext != ".png" &&
-                            rObj.data[j].ext != ".gif")
-                              continue;
+                        SetStatus("Couldn't fetch page " + (i + 1).ToString() + ". Retrying. (" + retry + ")", 1);
+                        i--;
+                        retry++;
 
-                        /* Set filename */
-                        string filename;
-                        filename = rObj.data[j].hash + rObj.data[j].ext;
+                        continue;
+                    }
+                    else
+                        return;
+                }
 
-                        sURL = "http://i.imgur.com/" + filename;   
+                retry = 1;
+                
+                objReader = new StreamReader(objStream);
 
-                        try
+                /* Read JSON */
+                sJSON = objReader.ReadLine();
+
+                /* Deserialize */
+                try
+                {
+                    rObj = fastJSON.JSON.Instance.ToObject<RootObject>(sJSON);
+                }
+                catch
+                {
+                    SetStatus("Couldn't fetch data. Is Imgur in maintenance?", 1);                    
+                    Thread.Sleep(2000);
+                    return;
+                }
+                /* For every picture on the list... */
+                for (int j = 0; j < rObj.data.Count; j++, Counter++)
+                {
+                    /* Save only .ext */
+                    if (rObj.data[j].ext != ".jpg" && 
+                        rObj.data[j].ext != ".jpeg" && 
+                        rObj.data[j].ext != ".png" &&
+                        rObj.data[j].ext != ".gif")
+                            continue;
+
+                    /* Set filename */
+                    string filename;
+                    filename = rObj.data[j].hash + rObj.data[j].ext;
+
+                    sURL = "http://i.imgur.com/" + filename;   
+
+                    try
+                    {
+                        /* Get image */
+                        using (WebClient wc = new WebClient())
+                        using (Stream stream = wc.OpenRead(sURL))
                         {
-                            /* Get image */
-                            using (WebClient wc = new WebClient())
-                            using (Stream stream = wc.OpenRead(sURL))
-                            {
-                                settings.img = Image.FromStream(stream);                            
-                            }
+                            settings.img = Image.FromStream(stream);                            
+                        }
                        
-                            if (settings.isDownloading)
+                        if (settings.isDownloading)
+                        {
+                            /* Save in proper format */
+                            switch (rObj.data[j].ext)
                             {
-                                /* Save in proper format */
-                                switch (rObj.data[j].ext)
-                                {
-                                    case ".png":
-                                        settings.img.Save(settings.savePath + filename, ImageFormat.Png);
-                                        break;
-                                    case ".jpg":
-                                        settings.img.Save(settings.savePath + filename, ImageFormat.Jpeg);
-                                        break;
-                                    case ".jpeg":
-                                        settings.img.Save(settings.savePath + filename, ImageFormat.Jpeg);
-                                        break;
-                                    case ".gif":
-                                        settings.img.Save(settings.savePath + filename, ImageFormat.Gif);
-                                        break;
-                                    default:
-                                        break;
-                                }
+                                case ".png":
+                                    settings.img.Save(settings.savePath + filename, ImageFormat.Png);
+                                    break;
+                                case ".jpg":
+                                    settings.img.Save(settings.savePath + filename, ImageFormat.Jpeg);
+                                    break;
+                                case ".jpeg":
+                                    settings.img.Save(settings.savePath + filename, ImageFormat.Jpeg);
+                                    break;
+                                case ".gif":
+                                    settings.img.Save(settings.savePath + filename, ImageFormat.Gif);
+                                    break;
+                                default:
+                                    break;
                             }
                         }
-                        catch
-                        {
-                        }
-
-                        if (SaveThread.CancellationPending)
-	                    {
-	                        e.Cancel = true;
-	                        break;
-	                    }
-                        /* Wait after save */
-                        Thread.Sleep(200);    
-
-                        settings.progressPages = i;
-                        settings.progressData = j;
-                        settings.currentTitle = rObj.data[j].title;
-                        settings.currentFile = sURL;
-                        settings.filename = filename;
-                        settings.currentData = (j + 1).ToString() + "/" + rObj.data.Count.ToString(); // e.g. 5/56
-                        
-                        /* Report back */
-                        worker.ReportProgress(Counter, settings);    
-
+                    }
+                    catch
+                    {
+                        badCounter++;
+                        SetStatus("Couldn't save "+badCounter.ToString()+" file(s). Last: " + filename, 2);
                     }
 
-                    /* Fetch next page */
-                    sURL = "http://imgur.com/" + settings.galPrefix +"/page/" + (i+1).ToString() + ".json";   
+                    if (SaveThread.CancellationPending)
+	                {	                    
+                        Thread.Sleep(1500); 
+	                    return;
+	                }
+                    /* Wait after save */
+                    Thread.Sleep(300);    
+
+                    settings.progressPages = i;
+                    settings.progressData = j;
+                    settings.currentTitle = rObj.data[j].title;
+                    settings.currentFile = sURL;
+                    settings.filename = filename;
+                    settings.currentData = (j + 1).ToString() + "/" + rObj.data.Count.ToString(); // e.g. 5/56
+                        
+                    /* Report back */
+                    worker.ReportProgress(Counter, settings);    
+
+                }
+
+                /* Fetch next page */
+                sURL = "http://imgur.com/" + settings.galPrefix +"/page/" + (i+1).ToString() + ".json";   
                     
-                }            
+            }            
 
         }      
 
         private void SaveThread_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             SettingsExchanger settings = e.UserState as SettingsExchanger;
-
-            lCurrentUrl.Text = settings.currentFile;
-            lImgCounter.Text = settings.currentData;
 
             pbPages.Value = settings.progressPages;
             pbImages.Value = settings.progressData;
@@ -254,6 +330,7 @@ namespace Rippit
             dgvSummary.Rows.Add(e.ProgressPercentage /* Counter */,
                                 settings.currentFile,
                                 settings.currentTitle);
+            dgvSummary.FirstDisplayedScrollingRowIndex = dgvSummary.RowCount - 1;
             dUrlPath.Add(settings.currentFile, settings.savePath + settings.filename);
 
         }
@@ -261,9 +338,8 @@ namespace Rippit
         private void SaveThread_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             pbPages.Value = pbPages.Maximum;          // Update for the last day
-            lCurrentUrl.Text = "";
-            lImgCounter.Text = "";
 
+            SetStatus("Finished on " + e.Result + " page.", 1);
           
             tmrAfterSave.Enabled = true;     // Delay progress bars
         }
