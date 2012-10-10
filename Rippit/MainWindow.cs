@@ -12,16 +12,14 @@ using System.Text.RegularExpressions;
 using System.Drawing.Imaging;
 using System.Threading;
 
-
 namespace Rippit
-{
-    
+{    
     public partial class MainWindow : Form
-    {
+    {       
         private Dictionary<string, string> prefixes = new Dictionary<string, string>();
         private Dictionary<string, string> dUrlPath = new Dictionary<string, string>();
         static bool cbSortState = false;
-
+       
         public string Prefix
         {
             get
@@ -48,6 +46,7 @@ namespace Rippit
 
             cbCategory.SelectedIndex = 0;
             cbSort.SelectedIndex = 0;
+         // tabSummary.SelectedIndex = 1;
         }
 
         private void ToggleInputs(bool on)
@@ -129,7 +128,7 @@ namespace Rippit
             SaveThread.RunWorkerAsync(settings);
             ToggleInputs(false);
         }
-
+        
         private void SetStatus(string s, int i)
         {
             switch(i)
@@ -140,9 +139,39 @@ namespace Rippit
                 case 2:
                     lStatus2.Text = s;
                     break;
+                case 3:
+                    lStatus3.Text = s;
+                    break;
             }
         }
-   
+        
+        private void AddGalleryPic(Image img)
+        {
+
+            PictureBox x = new PictureBox();
+
+            x.BackgroundImageLayout = ImageLayout.Stretch;
+            x.BackgroundImage = img;
+
+            x.Size = new Size(100, 100);
+            x.Padding = new Padding(0);
+            x.Margin = new Padding(0);
+            x.Click += new EventHandler(Gallery_Click);
+            x.Cursor = Cursors.Hand;
+
+
+            if (flowGallery.Controls.Count == 24)
+            {
+                for (int j = 7; j >= 0; j--)
+                    flowGallery.Controls.RemoveAt(j);
+                flowGallery.Controls.Add(x);
+            }
+            else
+                flowGallery.Controls.Add(x);
+        }
+
+        #region Event Handlers
+
         private void btStart_Click(object sender, EventArgs e)
         {
             InitSave();
@@ -171,6 +200,79 @@ namespace Rippit
             else
                 cbSort.Enabled = true;
         }
+
+        private void dgvSummary_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            DataGridView ob = sender as DataGridView;
+
+            if (e.ColumnIndex == 1)
+            {
+                DataGridViewCell cell = ob[e.ColumnIndex, e.RowIndex] as DataGridViewCell;
+                string url = cell.Value as string;
+                if (chbDownload.Checked)
+                    System.Diagnostics.Process.Start(dUrlPath[url]);
+                else
+                    System.Diagnostics.Process.Start(url);
+            }
+        }
+
+        private void btStop_Click(object sender, EventArgs e)
+        {
+            SaveThread.CancelAsync();
+        }
+
+        private void Gallery_Click(object sender, EventArgs e)
+        {
+            PictureBox x = sender as PictureBox;
+
+            int i = flowGallery.Controls.IndexOf(x);
+            DataGridViewCell cell = dgvSummary[1, dgvSummary.Rows.Count - 1 - (flowGallery.Controls.Count - 1 - i)];
+            string url = cell.Value as string;
+            if (chbDownload.Checked)
+                System.Diagnostics.Process.Start(dUrlPath[url]);
+            else
+                System.Diagnostics.Process.Start(url);
+        }
+
+        private void Pages_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.Up:
+                case Keys.Down:
+                case Keys.Left:
+                case Keys.Right:
+                case Keys.PageUp:
+                case Keys.PageDown:
+                case Keys.Delete:
+                case Keys.Back:
+                    e.SuppressKeyPress = false;
+                    return;
+                default:
+                    break;
+            }
+
+            //Block non-number characters
+            char currentKey = (char)e.KeyCode;
+            bool modifier = e.Control || e.Alt || e.Shift;
+            bool nonNumber = char.IsLetter(currentKey) ||
+                             char.IsSymbol(currentKey) ||
+                             char.IsWhiteSpace(currentKey) ||
+                             char.IsPunctuation(currentKey);
+
+            if (!modifier && nonNumber)
+                e.SuppressKeyPress = true;
+
+            //Handle pasted Text
+            if (e.Control && e.KeyCode == Keys.V)
+            {
+                e.SuppressKeyPress = true;
+            }
+        }
+
+        #endregion
+
+        #region SaveThread Handlers
 
         private void SaveThread_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -305,7 +407,7 @@ namespace Rippit
                     settings.currentData = (j + 1).ToString() + "/" + rObj.data.Count.ToString(); // e.g. 5/56
                         
                     /* Report back */
-                    worker.ReportProgress(Counter, settings);    
+                    worker.ReportProgress(Counter, settings);                    
 
                 }
 
@@ -323,9 +425,9 @@ namespace Rippit
             pbPages.Value = settings.progressPages;
             pbImages.Value = settings.progressData;
 
-            pictureBox3.Image = pictureBox2.Image;
-            pictureBox2.Image = pictureBox1.Image; 
-            pictureBox1.Image = settings.img;
+            pictureBox3.BackgroundImage = pictureBox2.BackgroundImage;
+            pictureBox2.BackgroundImage = pictureBox1.BackgroundImage; 
+            pictureBox1.BackgroundImage = settings.img;
             
             dgvSummary.Rows.Add(e.ProgressPercentage /* Counter */,
                                 settings.currentFile,
@@ -333,6 +435,9 @@ namespace Rippit
             dgvSummary.FirstDisplayedScrollingRowIndex = dgvSummary.RowCount - 1;
             dUrlPath.Add(settings.currentFile, settings.savePath + settings.filename);
 
+            /* Add another image to gallery */
+            AddGalleryPic(settings.img);       
+                
         }
 
         private void SaveThread_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -344,28 +449,13 @@ namespace Rippit
             tmrAfterSave.Enabled = true;     // Delay progress bars
         }
 
-        private void dgvSummary_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            DataGridView ob = sender as DataGridView;
+        #endregion
 
-            if (e.ColumnIndex == 1)
-            {
-                DataGridViewCell cell = ob[e.ColumnIndex, e.RowIndex] as DataGridViewCell;
-                string url = cell.Value as string;
-                if(chbDownload.Checked)
-                    System.Diagnostics.Process.Start(dUrlPath[url]);
-                else
-                    System.Diagnostics.Process.Start(url);
-            }
-        }
+       
+    }
 
-        private void btStop_Click(object sender, EventArgs e)
-        {
-            SaveThread.CancelAsync();
-        }     
+    #region JSON Data
 
-    }    
-  
     public class SettingsExchanger
     {
         public int numPages { get; set; }           // How many pages?
@@ -415,6 +505,9 @@ namespace Rippit
         public int status { get; set; }
         public bool success { get; set; }
     }
+
+    #endregion
+
 }
 
 

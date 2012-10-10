@@ -47,11 +47,14 @@
             this.label1 = new System.Windows.Forms.Label();
             this.tSubreddit = new System.Windows.Forms.TextBox();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.tabSummary = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
             this.dgvSummary = new System.Windows.Forms.DataGridView();
             this.Num = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.URL = new System.Windows.Forms.DataGridViewLinkColumn();
             this.Desc = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.flowGallery = new System.Windows.Forms.FlowLayoutPanel();
             this.pbPages = new System.Windows.Forms.ProgressBar();
             this.tmrAfterSave = new System.Windows.Forms.Timer(this.components);
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -62,12 +65,15 @@
             this.StatusStrip = new System.Windows.Forms.StatusStrip();
             this.lStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.lStatus2 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.lStatus3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.panel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel2.SuspendLayout();
-            this.groupBox2.SuspendLayout();
+            this.tabSummary.SuspendLayout();
+            this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvSummary)).BeginInit();
+            this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -81,7 +87,7 @@
             this.panel1.Controls.Add(this.groupBox1);
             this.panel1.Location = new System.Drawing.Point(12, 12);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(806, 106);
+            this.panel1.Size = new System.Drawing.Size(810, 106);
             this.panel1.TabIndex = 0;
             // 
             // groupBox1
@@ -103,7 +109,7 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(806, 106);
+            this.groupBox1.Size = new System.Drawing.Size(810, 106);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Settings";
@@ -136,6 +142,7 @@
             this.tToPage.Size = new System.Drawing.Size(45, 20);
             this.tToPage.TabIndex = 2;
             this.tToPage.Text = "200";
+            this.tToPage.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Pages_KeyDown);
             // 
             // cbSort
             // 
@@ -225,6 +232,7 @@
             this.tFromPage.Size = new System.Drawing.Size(45, 20);
             this.tFromPage.TabIndex = 1;
             this.tFromPage.Text = "1";
+            this.tFromPage.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Pages_KeyDown);
             // 
             // btStart
             // 
@@ -254,22 +262,35 @@
             // 
             // panel2
             // 
-            this.panel2.Controls.Add(this.groupBox2);
-            this.panel2.Location = new System.Drawing.Point(9, 124);
+            this.panel2.Controls.Add(this.tabSummary);
+            this.panel2.Location = new System.Drawing.Point(12, 121);
+            this.panel2.Margin = new System.Windows.Forms.Padding(0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(809, 346);
+            this.panel2.Size = new System.Drawing.Size(810, 329);
             this.panel2.TabIndex = 1;
             // 
-            // groupBox2
+            // tabSummary
             // 
-            this.groupBox2.Controls.Add(this.dgvSummary);
-            this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox2.Location = new System.Drawing.Point(0, 0);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(809, 346);
-            this.groupBox2.TabIndex = 0;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Summary";
+            this.tabSummary.Controls.Add(this.tabPage1);
+            this.tabSummary.Controls.Add(this.tabPage2);
+            this.tabSummary.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabSummary.Location = new System.Drawing.Point(0, 0);
+            this.tabSummary.Name = "tabSummary";
+            this.tabSummary.Padding = new System.Drawing.Point(0, 0);
+            this.tabSummary.SelectedIndex = 0;
+            this.tabSummary.Size = new System.Drawing.Size(810, 329);
+            this.tabSummary.TabIndex = 0;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.dgvSummary);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(802, 303);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Summary";
+            this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // dgvSummary
             // 
@@ -283,12 +304,11 @@
             this.URL,
             this.Desc});
             this.dgvSummary.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dgvSummary.Location = new System.Drawing.Point(3, 16);
+            this.dgvSummary.Location = new System.Drawing.Point(3, 3);
             this.dgvSummary.Name = "dgvSummary";
             this.dgvSummary.RowHeadersVisible = false;
-            this.dgvSummary.Size = new System.Drawing.Size(803, 327);
-            this.dgvSummary.TabIndex = 98;
-            this.dgvSummary.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvSummary_CellContentClick);
+            this.dgvSummary.Size = new System.Drawing.Size(796, 297);
+            this.dgvSummary.TabIndex = 99;
             // 
             // Num
             // 
@@ -319,11 +339,32 @@
             this.Desc.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.Desc.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.flowGallery);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Margin = new System.Windows.Forms.Padding(0);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Size = new System.Drawing.Size(802, 303);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Gallery";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // flowGallery
+            // 
+            this.flowGallery.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowGallery.Location = new System.Drawing.Point(0, 0);
+            this.flowGallery.Margin = new System.Windows.Forms.Padding(0);
+            this.flowGallery.Name = "flowGallery";
+            this.flowGallery.Padding = new System.Windows.Forms.Padding(0, 2, 0, 0);
+            this.flowGallery.Size = new System.Drawing.Size(802, 303);
+            this.flowGallery.TabIndex = 1;
+            // 
             // pbPages
             // 
             this.pbPages.Location = new System.Drawing.Point(12, 476);
             this.pbPages.Name = "pbPages";
-            this.pbPages.Size = new System.Drawing.Size(803, 23);
+            this.pbPages.Size = new System.Drawing.Size(810, 23);
             this.pbPages.TabIndex = 2;
             // 
             // tmrAfterSave
@@ -334,7 +375,7 @@
             // pictureBox1
             // 
             this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox1.Location = new System.Drawing.Point(535, 3);
+            this.pictureBox1.Location = new System.Drawing.Point(541, 3);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(262, 192);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -363,12 +404,12 @@
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(800, 198);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(807, 198);
             this.tableLayoutPanel1.TabIndex = 12;
             // 
             // pictureBox3
             // 
-            this.pictureBox3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pictureBox3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.pictureBox3.Location = new System.Drawing.Point(3, 3);
             this.pictureBox3.Name = "pictureBox3";
             this.pictureBox3.Size = new System.Drawing.Size(260, 192);
@@ -378,8 +419,8 @@
             // 
             // pictureBox2
             // 
-            this.pictureBox2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pictureBox2.Location = new System.Drawing.Point(269, 3);
+            this.pictureBox2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureBox2.Location = new System.Drawing.Point(272, 3);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(260, 192);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -390,31 +431,48 @@
             // 
             this.StatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.lStatus,
-            this.lStatus2});
-            this.StatusStrip.Location = new System.Drawing.Point(0, 725);
+            this.lStatus2,
+            this.lStatus3});
+            this.StatusStrip.Location = new System.Drawing.Point(0, 737);
             this.StatusStrip.Name = "StatusStrip";
-            this.StatusStrip.Size = new System.Drawing.Size(826, 22);
+            this.StatusStrip.Size = new System.Drawing.Size(841, 22);
             this.StatusStrip.SizingGrip = false;
             this.StatusStrip.TabIndex = 13;
             this.StatusStrip.Text = "statusStrip1";
             // 
             // lStatus
             // 
+            this.lStatus.AutoSize = false;
+            this.lStatus.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
+            this.lStatus.BorderStyle = System.Windows.Forms.Border3DStyle.Bump;
+            this.lStatus.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lStatus.Margin = new System.Windows.Forms.Padding(0);
             this.lStatus.Name = "lStatus";
-            this.lStatus.Size = new System.Drawing.Size(0, 17);
+            this.lStatus.Size = new System.Drawing.Size(200, 22);
+            this.lStatus.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // lStatus2
             // 
-            this.lStatus2.Margin = new System.Windows.Forms.Padding(600, 3, 0, 2);
+            this.lStatus2.AutoSize = false;
+            this.lStatus2.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
+            this.lStatus2.BorderStyle = System.Windows.Forms.Border3DStyle.Bump;
+            this.lStatus2.Margin = new System.Windows.Forms.Padding(0);
             this.lStatus2.Name = "lStatus2";
-            this.lStatus2.Size = new System.Drawing.Size(0, 17);
+            this.lStatus2.Size = new System.Drawing.Size(250, 22);
+            this.lStatus2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lStatus3
+            // 
+            this.lStatus3.Margin = new System.Windows.Forms.Padding(0);
+            this.lStatus3.Name = "lStatus3";
+            this.lStatus3.Size = new System.Drawing.Size(0, 22);
             // 
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.tableLayoutPanel1);
             this.groupBox3.Location = new System.Drawing.Point(9, 505);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(806, 217);
+            this.groupBox3.Size = new System.Drawing.Size(813, 217);
             this.groupBox3.TabIndex = 14;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Preview";
@@ -423,7 +481,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(826, 747);
+            this.ClientSize = new System.Drawing.Size(841, 759);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.StatusStrip);
             this.Controls.Add(this.pbPages);
@@ -439,8 +497,10 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.panel2.ResumeLayout(false);
-            this.groupBox2.ResumeLayout(false);
+            this.tabSummary.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvSummary)).EndInit();
+            this.tabPage2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
@@ -460,8 +520,6 @@
         private System.Windows.Forms.TextBox tSubreddit;
         private System.Windows.Forms.Button btStart;
         private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.DataGridView dgvSummary;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox tFromPage;
         private System.Windows.Forms.ProgressBar pbPages;
@@ -480,14 +538,20 @@
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox tToPage;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Num;
-        private System.Windows.Forms.DataGridViewLinkColumn URL;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Desc;
         private System.Windows.Forms.Button btStop;
         private System.Windows.Forms.StatusStrip StatusStrip;
         private System.Windows.Forms.ToolStripStatusLabel lStatus;
         private System.Windows.Forms.ToolStripStatusLabel lStatus2;
         private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.TabControl tabSummary;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.DataGridView dgvSummary;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Num;
+        private System.Windows.Forms.DataGridViewLinkColumn URL;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Desc;
+        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.FlowLayoutPanel flowGallery;
+        private System.Windows.Forms.ToolStripStatusLabel lStatus3;
 
 
 
