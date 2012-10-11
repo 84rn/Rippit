@@ -19,6 +19,8 @@ namespace Rippit
         private Dictionary<string, string> prefixes = new Dictionary<string, string>();
         private Dictionary<string, string> dUrlPath = new Dictionary<string, string>();
         static bool cbSortState = false;
+
+        private List<PictureBox> pbBuffer = new List<PictureBox>();
        
         public string Prefix
         {
@@ -98,10 +100,23 @@ namespace Rippit
                 case 0:
                     MessageBox.Show("The entered path is wrong!","Wrong save path!", 
                                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                    
+                    return;                   
             }
-                     
+
+            if (chbDownload.Checked && !Directory.Exists(tempPath))
+            {
+                 DialogResult result = MessageBox.Show("Directory " + tempPath + " doesn't exist. Do you want to create it?", "Wrong path", 
+                                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                 if (result == DialogResult.Yes)
+                 {
+                     Directory.CreateDirectory(tempPath);
+                 }
+                 else
+                 {
+                     chbDownload.Checked = false;
+                 }
+            }
                     
             SettingsExchanger settings = new SettingsExchanger
             {
@@ -119,6 +134,8 @@ namespace Rippit
                 filename = ""
             };
 
+            pbBuffer.Clear();
+            flowGallery.Controls.Clear();
             dgvSummary.Rows.Clear();
             dUrlPath.Clear();
             pbPages.Minimum = settings.startPage;
@@ -162,9 +179,17 @@ namespace Rippit
 
             if (flowGallery.Controls.Count == 24)
             {
-                for (int j = 7; j >= 0; j--)
-                    flowGallery.Controls.RemoveAt(j);
-                flowGallery.Controls.Add(x);
+                pbBuffer.Add(x);
+
+                if (pbBuffer.Count == 8)
+                {
+                    for (int j = 7; j >= 0; j--)
+                        flowGallery.Controls.RemoveAt(j);
+                    flowGallery.Controls.AddRange(pbBuffer.ToArray());
+
+                    pbBuffer.Clear();
+                }
+
             }
             else
                 flowGallery.Controls.Add(x);
@@ -226,7 +251,7 @@ namespace Rippit
             PictureBox x = sender as PictureBox;
 
             int i = flowGallery.Controls.IndexOf(x);
-            DataGridViewCell cell = dgvSummary[1, dgvSummary.Rows.Count - 1 - (flowGallery.Controls.Count - 1 - i)];
+            DataGridViewCell cell = dgvSummary[1, dgvSummary.Rows.Count - 1 - (flowGallery.Controls.Count - 1 - i) - (pbBuffer.Count)];
             string url = cell.Value as string;
             if (chbDownload.Checked)
                 System.Diagnostics.Process.Start(dUrlPath[url]);
@@ -331,6 +356,9 @@ namespace Rippit
                 try
                 {
                     rObj = fastJSON.JSON.Instance.ToObject<RootObject>(sJSON);
+
+                    if (rObj.data.Count == 0)
+                        return;
                 }
                 catch
                 {
@@ -397,8 +425,9 @@ namespace Rippit
 	                    return;
 	                }
                     /* Wait after save */
-                    Thread.Sleep(300);    
+                    Thread.Sleep(300);
 
+                    settings.numImages = rObj.data.Count-1;
                     settings.progressPages = i;
                     settings.progressData = j;
                     settings.currentTitle = rObj.data[j].title;
@@ -422,6 +451,10 @@ namespace Rippit
         {
             SettingsExchanger settings = e.UserState as SettingsExchanger;
 
+            if (pbImages.Maximum != settings.numImages)
+                pbImages.Maximum = settings.numImages;
+
+
             pbPages.Value = settings.progressPages;
             pbImages.Value = settings.progressData;
 
@@ -433,9 +466,18 @@ namespace Rippit
                                 settings.currentFile,
                                 settings.currentTitle);
             dgvSummary.FirstDisplayedScrollingRowIndex = dgvSummary.RowCount - 1;
-            dUrlPath.Add(settings.currentFile, settings.savePath + settings.filename);
+
+            try
+            {
+                dUrlPath.Add(settings.currentFile, settings.savePath + settings.filename);
+            }
+            catch
+            {
+                SetStatus("Image " + settings.currentFile + " is a duplicate. Ignoring.", 3);
+            }
 
             /* Add another image to gallery */
+           
             AddGalleryPic(settings.img);       
                 
         }
@@ -445,20 +487,22 @@ namespace Rippit
             pbPages.Value = pbPages.Maximum;          // Update for the last day
 
             SetStatus("Finished on " + e.Result + " page.", 1);
+            SetStatus("", 2);
+            SetStatus("", 3);
           
             tmrAfterSave.Enabled = true;     // Delay progress bars
         }
 
         #endregion
 
-       
-    }
 
-    #region JSON Data
+
+    }
 
     public class SettingsExchanger
     {
         public int numPages { get; set; }           // How many pages?
+        public int numImages { get; set; }
         public int startPage { get; set; }          // Start page num
         public bool isDownloading { get; set; }     // Download the file
         public string galPrefix { get; set; }       // Gallery prefix
@@ -472,7 +516,9 @@ namespace Rippit
         public Image img { get; set; }
 
     }
-        
+
+    #region JSON Data
+
     public class Datum
     {
         public string hash { get; set; }

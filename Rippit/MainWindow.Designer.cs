@@ -179,6 +179,7 @@
             // pbImages
             // 
             this.pbImages.Location = new System.Drawing.Point(87, 86);
+            this.pbImages.MarqueeAnimationSpeed = 0;
             this.pbImages.Maximum = 55;
             this.pbImages.Name = "pbImages";
             this.pbImages.Size = new System.Drawing.Size(194, 10);
@@ -309,6 +310,7 @@
             this.dgvSummary.RowHeadersVisible = false;
             this.dgvSummary.Size = new System.Drawing.Size(796, 297);
             this.dgvSummary.TabIndex = 99;
+            this.dgvSummary.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvSummary_CellContentClick);
             // 
             // Num
             // 
@@ -465,7 +467,7 @@
             // 
             this.lStatus3.Margin = new System.Windows.Forms.Padding(0);
             this.lStatus3.Name = "lStatus3";
-            this.lStatus3.Size = new System.Drawing.Size(0, 22);
+            this.lStatus3.Size = new System.Drawing.Size(0, 0);
             // 
             // groupBox3
             // 
