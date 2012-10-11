@@ -1,3 +1,5 @@
 # ignore exe file
 *.exe
 */bin/*
+*/obj/*
+
