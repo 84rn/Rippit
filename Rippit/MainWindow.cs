@@ -16,18 +16,23 @@ namespace Rippit
 {    
     public partial class MainWindow : Form
     {       
-        private Dictionary<string, string> prefixes = new Dictionary<string, string>();
+        /* This sets the postfixes for the URL */
+        private Dictionary<string, string> postfixes = new Dictionary<string, string>();
+        /* Path / URL */
         private Dictionary<string, string> dUrlPath = new Dictionary<string, string>();
+        
         static bool cbSortState = false;
 
+        /* Buffer for new pictures in the gallery */
         private List<PictureBox> pbBuffer = new List<PictureBox>();
-       
+        
+        /* U know what it does. */
         public string Prefix
         {
             get
             {
                 return "r/" + tSubreddit.Text +
-                       prefixes[(cbSort.Enabled ? cbCategory.Text + "_" + cbSort.Text : cbCategory.Text)];
+                       postfixes[(cbSort.Enabled ? cbCategory.Text + "_" + cbSort.Text : cbCategory.Text)];
             }
             set
             {
@@ -39,18 +44,20 @@ namespace Rippit
         {
             InitializeComponent();
             
-            prefixes["Hot"] = "/new";
-            prefixes["Top_All time"] = "/top/all";
-            prefixes["Top_This year"] = "/top/year";
-            prefixes["Top_This month"] = "/top/month";
-            prefixes["Top_This week"] = "/top/week";
-            prefixes["Top_Today"] = "/top/day";
+            /* Set the postfixes */
+            postfixes["Hot"] = "/new";
+            postfixes["Top_All time"] = "/top/all";
+            postfixes["Top_This year"] = "/top/year";
+            postfixes["Top_This month"] = "/top/month";
+            postfixes["Top_This week"] = "/top/week";
+            postfixes["Top_Today"] = "/top/day";
 
             cbCategory.SelectedIndex = 0;
             cbSort.SelectedIndex = 0;
          // tabSummary.SelectedIndex = 1;
         }
 
+        /* Toggle the state of all buttons/controls */
         private void ToggleInputs(bool on)
         {
             cbSortState = cbSort.Enabled;
@@ -70,6 +77,7 @@ namespace Rippit
             
         }
 
+        /* Check if the path is OK */
         private int CheckPath()
         {
             Match match = Regex.Match(tPath.Text, @"^.:\\.*\\?$", RegexOptions.IgnoreCase);
@@ -85,6 +93,7 @@ namespace Rippit
                 return 0;
         }
         
+        /* INITIALIZE! */
         private void InitSave()
         {
             string tempPath = "";
@@ -117,7 +126,8 @@ namespace Rippit
                      chbDownload.Checked = false;
                  }
             }
-                    
+              
+            /* Set the exchanger */
             SettingsExchanger settings = new SettingsExchanger
             {
                 currentTitle = "",
@@ -134,6 +144,7 @@ namespace Rippit
                 filename = ""
             };
 
+            /* Clear all the shit */
             pbBuffer.Clear();
             flowGallery.Controls.Clear();
             dgvSummary.Rows.Clear();
@@ -142,10 +153,12 @@ namespace Rippit
             pbPages.Maximum = settings.numPages + settings.startPage;
             pbImages.Maximum = 55;  // 56 pics per page    
             
+            /* AWWW YISSS */
             SaveThread.RunWorkerAsync(settings);
             ToggleInputs(false);
         }
         
+        /* Set the status in StatusBar */
         private void SetStatus(string s, int i)
         {
             switch(i)
@@ -161,14 +174,22 @@ namespace Rippit
                     break;
             }
         }
-        
+
+        /* Add another pic */        
         private void AddGalleryPic(Image img)
         {
 
             PictureBox x = new PictureBox();
 
-            x.BackgroundImageLayout = ImageLayout.Stretch;
-            x.BackgroundImage = img;
+            Bitmap b = new Bitmap(100, 100);
+            Graphics g = Graphics.FromImage((Image)b);
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+
+            g.DrawImage(img, 0, 0, 100, 100);
+            g.Dispose();
+
+            //x.BackgroundImageLayout = ImageLayout.Stretch;
+            x.BackgroundImage = (Image)b;
 
             x.Size = new Size(100, 100);
             x.Padding = new Padding(0);
@@ -176,7 +197,7 @@ namespace Rippit
             x.Click += new EventHandler(Gallery_Click);
             x.Cursor = Cursors.Hand;
 
-
+            /* If it's OVER 9000, wait for 8 more and add them */
             if (flowGallery.Controls.Count == 24)
             {
                 pbBuffer.Add(x);
@@ -202,6 +223,7 @@ namespace Rippit
             InitSave();
         }        
 
+        /* Finish */
         private void tmrAfterSave_Tick(object sender, EventArgs e)
         {
             pbPages.Value = pbPages.Minimum;
@@ -226,6 +248,7 @@ namespace Rippit
                 cbSort.Enabled = true;
         }
 
+        /* If in download mode, click to get a pic from HDD. If not, URL */
         private void dgvSummary_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             DataGridView ob = sender as DataGridView;
@@ -241,6 +264,7 @@ namespace Rippit
             }
         }
 
+        /* You've had enough */
         private void btStop_Click(object sender, EventArgs e)
         {
             SaveThread.CancelAsync();
@@ -259,6 +283,7 @@ namespace Rippit
                 System.Diagnostics.Process.Start(url);
         }
 
+        /* Filter the strokes */
         private void Pages_KeyDown(object sender, KeyEventArgs e)
         {
             switch (e.KeyCode)
@@ -447,6 +472,7 @@ namespace Rippit
 
         }      
 
+        /* New pic is coming */
         private void SaveThread_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             SettingsExchanger settings = e.UserState as SettingsExchanger;
@@ -486,7 +512,7 @@ namespace Rippit
         {
             pbPages.Value = pbPages.Maximum;          // Update for the last day
 
-            SetStatus("Finished on " + e.Result + " page.", 1);
+            SetStatus("Finished on page " + e.Result, 1);
             SetStatus("", 2);
             SetStatus("", 3);
           
@@ -499,6 +525,8 @@ namespace Rippit
 
     }
 
+    /* Exchange the data between BGW and GUI.
+     * Yes, I'm aware it can be done better */
     public class SettingsExchanger
     {
         public int numPages { get; set; }           // How many pages?

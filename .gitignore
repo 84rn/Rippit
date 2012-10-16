@@ -1,5 +1,6 @@
 # ignore exe file
 *.exe
-*/bin/*
-*/obj/*
+*/bin
+*/obj
+*/publish
 

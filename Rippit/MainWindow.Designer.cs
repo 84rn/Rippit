@@ -48,13 +48,13 @@
             this.tSubreddit = new System.Windows.Forms.TextBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this.tabSummary = new System.Windows.Forms.TabControl();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.flowGallery = new System.Windows.Forms.FlowLayoutPanel();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.dgvSummary = new System.Windows.Forms.DataGridView();
             this.Num = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.URL = new System.Windows.Forms.DataGridViewLinkColumn();
             this.Desc = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.flowGallery = new System.Windows.Forms.FlowLayoutPanel();
             this.pbPages = new System.Windows.Forms.ProgressBar();
             this.tmrAfterSave = new System.Windows.Forms.Timer(this.components);
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -71,9 +71,9 @@
             this.groupBox1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.tabSummary.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvSummary)).BeginInit();
-            this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -200,7 +200,7 @@
             this.tPath.Name = "tPath";
             this.tPath.Size = new System.Drawing.Size(262, 20);
             this.tPath.TabIndex = 3;
-            this.tPath.Text = "D:\\s";
+            this.tPath.Text = "C:\\";
             // 
             // chbDownload
             // 
@@ -272,8 +272,8 @@
             // 
             // tabSummary
             // 
-            this.tabSummary.Controls.Add(this.tabPage1);
             this.tabSummary.Controls.Add(this.tabPage2);
+            this.tabSummary.Controls.Add(this.tabPage1);
             this.tabSummary.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabSummary.Location = new System.Drawing.Point(0, 0);
             this.tabSummary.Name = "tabSummary";
@@ -281,6 +281,27 @@
             this.tabSummary.SelectedIndex = 0;
             this.tabSummary.Size = new System.Drawing.Size(810, 329);
             this.tabSummary.TabIndex = 0;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.flowGallery);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Margin = new System.Windows.Forms.Padding(0);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Size = new System.Drawing.Size(802, 303);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Gallery";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // flowGallery
+            // 
+            this.flowGallery.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowGallery.Location = new System.Drawing.Point(0, 0);
+            this.flowGallery.Margin = new System.Windows.Forms.Padding(0);
+            this.flowGallery.Name = "flowGallery";
+            this.flowGallery.Padding = new System.Windows.Forms.Padding(0, 2, 0, 0);
+            this.flowGallery.Size = new System.Drawing.Size(802, 303);
+            this.flowGallery.TabIndex = 1;
             // 
             // tabPage1
             // 
@@ -340,27 +361,6 @@
             this.Desc.ReadOnly = true;
             this.Desc.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.Desc.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.Controls.Add(this.flowGallery);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Margin = new System.Windows.Forms.Padding(0);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(802, 303);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Gallery";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // flowGallery
-            // 
-            this.flowGallery.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowGallery.Location = new System.Drawing.Point(0, 0);
-            this.flowGallery.Margin = new System.Windows.Forms.Padding(0);
-            this.flowGallery.Name = "flowGallery";
-            this.flowGallery.Padding = new System.Windows.Forms.Padding(0, 2, 0, 0);
-            this.flowGallery.Size = new System.Drawing.Size(802, 303);
-            this.flowGallery.TabIndex = 1;
             // 
             // pbPages
             // 
@@ -500,9 +500,9 @@
             this.groupBox1.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.tabSummary.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvSummary)).EndInit();
-            this.tabPage2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
