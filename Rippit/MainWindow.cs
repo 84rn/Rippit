@@ -60,7 +60,8 @@ namespace Rippit
         /* Toggle the state of all buttons/controls */
         private void ToggleInputs(bool on)
         {
-            cbSortState = cbSort.Enabled;
+            if(!on)
+             cbSortState = cbSort.Enabled;
             
             btStart.Enabled = on;
             tSubreddit.Enabled = on;
@@ -70,8 +71,10 @@ namespace Rippit
             chbDownload.Enabled = on;
             cbCategory.Enabled = on;
 
-            if(on)
+            if (on)
                 cbSort.Enabled = cbSortState;
+            else
+                cbSort.Enabled = false;
 
             btStop.Enabled = !on;
             
@@ -281,6 +284,7 @@ namespace Rippit
                 System.Diagnostics.Process.Start(dUrlPath[url]);
             else
                 System.Diagnostics.Process.Start(url);
+
         }
 
         /* Filter the strokes */
@@ -335,6 +339,7 @@ namespace Rippit
             StreamReader objReader;
             int Counter = 1;
             int badCounter = 0;
+            string name = null;
 
             int retry = 1;
 
@@ -415,23 +420,30 @@ namespace Rippit
                         {
                             settings.img = Image.FromStream(stream);                            
                         }
-                       
+
+                        name = rObj.data[j].title + rObj.data[j].ext;
+                        string invalid = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
+
+                        foreach (char c in invalid)
+                        {
+                            name = name.Replace(c.ToString(), "");
+                        }
                         if (settings.isDownloading)
                         {
                             /* Save in proper format */
                             switch (rObj.data[j].ext)
                             {
                                 case ".png":
-                                    settings.img.Save(settings.savePath + filename, ImageFormat.Png);
+                                    settings.img.Save(settings.savePath + name, ImageFormat.Png);
                                     break;
                                 case ".jpg":
-                                    settings.img.Save(settings.savePath + filename, ImageFormat.Jpeg);
+                                    settings.img.Save(settings.savePath + name, ImageFormat.Jpeg);
                                     break;
                                 case ".jpeg":
-                                    settings.img.Save(settings.savePath + filename, ImageFormat.Jpeg);
+                                    settings.img.Save(settings.savePath + name, ImageFormat.Jpeg);
                                     break;
                                 case ".gif":
-                                    settings.img.Save(settings.savePath + filename, ImageFormat.Gif);
+                                    settings.img.Save(settings.savePath + name, ImageFormat.Gif);
                                     break;
                                 default:
                                     break;
@@ -450,14 +462,14 @@ namespace Rippit
 	                    return;
 	                }
                     /* Wait after save */
-                    Thread.Sleep(300);
+                    //Thread.Sleep(300);
 
                     settings.numImages = rObj.data.Count-1;
                     settings.progressPages = i;
                     settings.progressData = j;
                     settings.currentTitle = rObj.data[j].title;
                     settings.currentFile = sURL;
-                    settings.filename = filename;
+                    settings.filename = name ;
                     settings.currentData = (j + 1).ToString() + "/" + rObj.data.Count.ToString(); // e.g. 5/56
                         
                     /* Report back */
@@ -487,15 +499,24 @@ namespace Rippit
             pictureBox3.BackgroundImage = pictureBox2.BackgroundImage;
             pictureBox2.BackgroundImage = pictureBox1.BackgroundImage; 
             pictureBox1.BackgroundImage = settings.img;
-            
-            dgvSummary.Rows.Add(e.ProgressPercentage /* Counter */,
-                                settings.currentFile,
-                                settings.currentTitle);
-            dgvSummary.FirstDisplayedScrollingRowIndex = dgvSummary.RowCount - 1;
 
             try
             {
+                dgvSummary.Rows.Add(e.ProgressPercentage /* Counter */,
+                                settings.currentFile,
+                                settings.currentTitle);
+                dgvSummary.FirstDisplayedScrollingRowIndex = dgvSummary.RowCount - 1;
+            }
+            catch
+            {
+            }
+            try
+            {
+                if(chbDownload.Checked)
                 dUrlPath.Add(settings.currentFile, settings.savePath + settings.filename);
+                else
+                    dUrlPath.Add(settings.currentFile, settings.savePath + settings.filename);
+
             }
             catch
             {
